@@ -27,7 +27,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // Check if today's outfit is selected, change select state to true
+    // When component mounts, set today's outfit
     axios.get('/api/outfits/today')
     .then(response => {
       this.setState ({
@@ -38,7 +38,8 @@ class App extends Component {
       console.log(error, '- Check current date outfit exists');
     })
 
-    // Check if today's outfit is selected, change select state to true
+    // Check if today's outfit is selected, change select state to true. 
+    // This allows a user to see todays oufit.
     if (!this.state.selected) {
        axios.get('/api/outfits')
        .then(response => {
@@ -51,6 +52,8 @@ class App extends Component {
       }
     }
 
+  // reassigns 'weather' in state from 'null' to whatever the user has selected, 
+  // then filters outfits based on whether they are suited to today's weather.
   handleWeather(weather) {
     this.setState({ weather });
     axios.post('/api/filterOutfits', {
@@ -70,6 +73,8 @@ class App extends Component {
 
     const { weather } = this.state;
 
+    // As long as there are outfits in the outfits array, 
+    // iterate through the array and create an outfit component for each outfit.
     const outfits = []
     console.log(this.state.outfits)
     if(this.state.outfits.length > 0){
@@ -78,6 +83,7 @@ class App extends Component {
       })
     }
 
+    // custom styling for dropdown box
     const customStyles = {
       control: (base, state) => ({
         ...base,

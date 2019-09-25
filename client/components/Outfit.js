@@ -16,6 +16,8 @@ class Outfit extends Component {
     this.checkCurrentDate = this.checkCurrentDate.bind(this);
   }
 
+  // Allows user to click on an item. This sends a post request that stores the selected combonation of 
+  // top, bottom, and shoes to the user's history. 
   handleClick(topId, bottomId, shoesId) {
     axios.post('/api/outfits', {
       top: topId,
@@ -30,6 +32,7 @@ class Outfit extends Component {
     })
   }
 
+  // Checks if the user has already slected an outfit of the day.
   checkCurrentDate() {
     axios.get('/api/outfits/today')
     .then(response => {
@@ -41,7 +44,7 @@ class Outfit extends Component {
     })
   }
 
-
+  // Renders today's outfit
   render() {
 
     const { top, bottom, shoes } = this.props.item;
