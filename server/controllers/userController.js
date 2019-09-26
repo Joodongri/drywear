@@ -81,7 +81,7 @@ userController.startSession = (req, res, next) => {
 userController.setSSIDCookie = (req, res, next) => {
     console.log(`Redirect to home page - cookieId is ${res.locals.sessionId}`);
     res.cookie('ssid', res.locals.sessionId, {httpOnly: true});
-    
+    return next();
 }
 
 userController.isLoggedIn = (req, res, next) => {

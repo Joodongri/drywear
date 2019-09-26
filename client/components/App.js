@@ -23,7 +23,7 @@ class App extends Component {
       selected: false,
       weather: null,
       todaysOutfit: [],
-      currentUser: "robb",
+      currentUser: "",
       loggedIn: false,
       rerender: false
     }
@@ -66,6 +66,38 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    // When component mounts, check if there is a current browser session. If there is not, redirect user to
+    // sign in page (which has a link to sign up). If there is a session, the following logic holds true:
+    axios.get('')
+
+    // When component mounts, set today's outfit
+    axios.get('/api/outfits/today/' + this.state.currentUser)
+    .then(response => {
+      this.setState ({
+        selected: response.data.today,
+        todaysOutfit: response.data.outfit,
+        rerender: false
+      })
+    }).catch(error => {
+      console.log(error, '- Check current date outfit exists');
+    })
+
+    // Check if today's outfit is selected, change select state to true. 
+    // This allows a user to see todays oufit.
+    if (!this.state.selected) {
+       axios.get('/api/outfits/' + this.state.currentUser)
+       .then(response => {
+         this.setState ({
+           outfits: response.data,
+           rerender: false
+         })
+       }).catch(error => {
+         console.log(error, '- Get outfit selections');
+       })
+    }
+  }
+
   // reassigns 'weather' in state from 'null' to whatever the user has selected, 
   // then filters outfits based on whether they are suited to today's weather.
   handleWeather(weather) {
@@ -97,27 +129,19 @@ class App extends Component {
     .catch((err) => {
       console.log(err);
     })
-    
-    // , (err, res) => {
-    //   if(err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(res)
-    //     if(res.data === 'verified') {
-    //       this.setState({currentUser: username, loggedIn: true});
-    //     }
-    //   }
-    // })
-    
-
-    // if username and password match, redirect user to homepage
-    // if username or password do not match
   }
 
   render() {
+    if(!this.state.loggedIn) {
+      console.log('inside conditional')
+      return (
+        <div>
+          <Login authenticate={this.authenticate}/>
+        </div>
+      )
+    }
 
     const { weather } = this.state;
-
     // As long as there are outfits in the outfits array, 
     // iterate through the array and create an outfit component for each outfit.
     const outfits = []
@@ -143,15 +167,7 @@ class App extends Component {
         }, color: 'black'
       })
     };
-  // if loggedIn is false, return login page
-  if(!this.state.loggedIn) {
-    console.log('inside conditional')
-    return (
-      <div>
-        <Login authenticate={this.authenticate}/>
-      </div>
-    )
-  }
+    // if loggedIn is false, return login page
     return (
       <div>
       { this.state.selected ? (
